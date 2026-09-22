@@ -1,7 +1,7 @@
 // app/detail/[kota].tsx
 import { View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import WeatherCard from ".../../../components/WeatherCard";
+import WeatherCard from "../../../components/WeatherCard";
 
 export default function HalamanDetail() {
   const { kota } = useLocalSearchParams<{ kota: string }>();
