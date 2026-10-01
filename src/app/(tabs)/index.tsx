@@ -23,24 +23,21 @@ import { konversiTingkatAQI } from "../../services/weatherAdapter";
 import { labelKodeCuaca } from "../../constants/weatherCodes";
 
 import { HasilGeocoding } from "../../types/geocoding";
-import {
-  DataCuacaLengkap,
-  DataKualitasUdara,
-} from "../../types/weather";
+import { DataCuacaLengkap, DataKualitasUdara } from "../../types/weather";
 
 export default function HalamanUtama() {
   const [teksCari, setTeksCari] = useState("");
   const [hasilPencarian, setHasilPencarian] = useState<HasilGeocoding[]>([]);
-  const [kotaTerpilih, setKotaTerpilih] =
-    useState<HasilGeocoding | null>(null);
+  const [kotaTerpilih, setKotaTerpilih] = useState<HasilGeocoding | null>(null);
   const [cuaca, setCuaca] = useState<DataCuacaLengkap | null>(null);
-  const [kualitasUdara, setKualitasUdara] =
-    useState<DataKualitasUdara | null>(null);
+  const [kualitasUdara, setKualitasUdara] = useState<DataKualitasUdara | null>(
+    null,
+  );
   const [sedangMemuat, setSedangMemuat] = useState(false);
   const [pesanError, setPesanError] = useState<string | null>(null);
 
   const teksTertunda = useDebounce(teksCari, 500);
-  const requestIdRef = useRef(0); // pencegah race condition
+  const requestIdRef = useRef(0);
 
   useEffect(() => {
     if (teksTertunda.trim().length === 0) {
@@ -74,9 +71,7 @@ export default function HalamanUtama() {
     } catch (err) {
       if (idSaatIni !== requestIdRef.current) return;
 
-      setPesanError(
-        "Gagal memuat data cuaca. Periksa koneksi internet Anda."
-      );
+      setPesanError("Gagal memuat data cuaca. Periksa koneksi internet Anda.");
     } finally {
       if (idSaatIni === requestIdRef.current) {
         setSedangMemuat(false);
@@ -89,10 +84,7 @@ export default function HalamanUtama() {
       <SearchBox onCari={setTeksCari} />
 
       {hasilPencarian.map((kota) => (
-        <TouchableOpacity
-          key={kota.id}
-          onPress={() => pilihKota(kota)}
-        >
+        <TouchableOpacity key={kota.id} onPress={() => pilihKota(kota)}>
           <Text>{kota.name}</Text>
         </TouchableOpacity>
       ))}
@@ -105,32 +97,45 @@ export default function HalamanUtama() {
 
           <Button
             title="Coba Lagi"
-            onPress={() =>
-              kotaTerpilih && pilihKota(kotaTerpilih)
-            }
+            onPress={() => kotaTerpilih && pilihKota(kotaTerpilih)}
           />
         </View>
       )}
 
-      {cuaca &&
-        kualitasUdara &&
-        kotaTerpilih &&
-        !sedangMemuat && (
+      {cuaca && kualitasUdara && kotaTerpilih && !sedangMemuat && (
+        <>
           <WeatherCard
             kota={kotaTerpilih.name}
             suhu={cuaca.saatIni.suhu}
-            tingkatAQI={konversiTingkatAQI(
-              kualitasUdara.indeksAQI
-            )}
+            tingkatAQI={konversiTingkatAQI(kualitasUdara.indeksAQI)}
             indeksAQI={kualitasUdara.indeksAQI}
           />
-        )}
+
+          <View>
+            <Text>Suhu maksimal: {cuaca.harian.suhuMaksimal[0]}°C</Text>
+
+            <Text>Suhu minimal: {cuaca.harian.suhuMinimal[0]}°C</Text>
+          </View>
+        </>
+      )}
 
       {cuaca && (
         <Text style={{ fontSize: 12, color: "#888" }}>
-          Kondisi: {labelKodeCuaca(cuaca.saatIni.kodeCuaca)} •
-          Angin {cuaca.saatIni.kecepatanAngin} km/j
+          Kondisi: {labelKodeCuaca(cuaca.saatIni.kodeCuaca)} • Angin{" "}
+          {cuaca.saatIni.kecepatanAngin} km/j
         </Text>
+      )}
+
+      {kualitasUdara && (
+        <View>
+          <Text style={{ fontSize: 12, color: "#888" }}>
+            PM2.5: {kualitasUdara.pm25} µg/m³
+          </Text>
+
+          <Text style={{ fontSize: 12, color: "#888" }}>
+            PM10: {kualitasUdara.pm10} µg/m³
+          </Text>
+        </View>
       )}
 
       <AtribusiCuaca />
