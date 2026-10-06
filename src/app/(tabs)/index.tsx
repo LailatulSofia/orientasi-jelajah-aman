@@ -21,6 +21,7 @@ import { cariKota } from "../../services/geocodingService";
 import { ambilCuaca } from "../../services/weatherService";
 import { ambilKualitasUdara } from "../../services/airQualityService";
 import { konversiTingkatAQI } from "../../services/weatherAdapter";
+import { ambilSemuaFavorit } from "../../services/favoritStorage";
 
 import { labelKodeCuaca } from "../../constants/weatherCodes";
 
@@ -35,6 +36,7 @@ export default function HalamanUtama() {
   const [kualitasUdara, setKualitasUdara] = useState<DataKualitasUdara | null>(null,);
 
   const [pesanLokasi, setPesanLokasi] = useState<string | null>(null);
+  const [sudahFavorit, setSudahFavorit] = useState(false);
 
   const [sedangMemuat, setSedangMemuat] = useState(false);
   const [pesanError, setPesanError] = useState<string | null>(null);
@@ -55,6 +57,10 @@ export default function HalamanUtama() {
 
   async function pilihKota(kota: HasilGeocoding) {
     setKotaTerpilih(kota);
+
+    const daftarFavorit = await ambilSemuaFavorit();
+    const sudahAda = daftarFavorit.some((k) => k.id === kota.id);
+    setSudahFavorit(sudahAda);
 
     const idSaatIni = ++requestIdRef.current;
 
@@ -138,20 +144,22 @@ export default function HalamanUtama() {
           suhu={cuaca.saatIni.suhu}
           tingkatAQI={konversiTingkatAQI(kualitasUdara.indeksAQI)}
         />
-        <Button
-          title="Tambahkan ke Favorit"
-            onPress={() =>
-              router.push({
-                pathname: "/tambah-favorit",
-                params: {
-                  id: String(kotaTerpilih.id),
-                  nama: kotaTerpilih.name,
-                  lat: String(kotaTerpilih.latitude),
-                  lon: String(kotaTerpilih.longitude),
-                },
-              })
-            }
-          />
+          {!sudahFavorit && (
+            <Button
+              title="Tambahkan ke Favorit"
+              onPress={() =>
+                router.push({
+                  pathname: "/tambah-favorit",
+                  params: {
+                    id: String(kotaTerpilih.id),
+                    nama: kotaTerpilih.name,
+                    lat: String(kotaTerpilih.latitude),
+                    lon: String(kotaTerpilih.longitude),
+                  },
+                })
+              }
+            />
+          )}
         </>
       )}
 
