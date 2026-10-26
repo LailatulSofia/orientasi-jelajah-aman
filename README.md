@@ -1,3 +1,7 @@
+#Latihan Mandiri pertemaun 7 
+
+Cache-segar adalah data cuaca yang tersimpan di perangkat dan umurnya masih berada dalam batas TTL, sehingga dapat digunakan tanpa mengambil data baru dari internet. Cache-basi adalah data yang tersimpan tetapi telah melewati batas TTL atau tidak dapat diperbarui, sehingga aplikasi dapat menampilkannya sebagai alternatif ketika jaringan gagal. First-run offline terjadi ketika pengguna membuka kota yang belum memiliki data cache saat perangkat tidak terhubung ke internet, sehingga aplikasi tidak memiliki data cuaca yang bisa ditampilkan. Label status data penting agar pengguna mengetahui asal dan kebaruan informasi cuaca yang sedang ditampilkan.
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).

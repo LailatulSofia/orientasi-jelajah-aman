@@ -1,7 +1,7 @@
 import * as SQLite from "expo-sqlite";
 
 const NAMA_DATABASE = "jelajah-aman.db";
-const VERSI_DATABASE = 1;
+const VERSI_DATABASE = 2;
 
 let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
@@ -23,11 +23,9 @@ async function bukaDanMigrasi(): Promise<SQLite.SQLiteDatabase> {
   return db;
 }
 
-async function migrasiDatabase(
-  db: SQLite.SQLiteDatabase
-): Promise<void> {
+async function migrasiDatabase(db: SQLite.SQLiteDatabase): Promise<void> {
   const baris = await db.getFirstAsync<{ user_version: number }>(
-    "PRAGMA user_version"
+    "PRAGMA user_version",
   );
 
   let versiSaatIni = baris?.user_version ?? 0;
@@ -55,7 +53,12 @@ async function migrasiDatabase(
     versiSaatIni = 1;
   }
 
-  // Migrasi versi berikutnya ditambahkan di sini.
+  if (versiSaatIni < 2) {
+    await db.execAsync(
+      "ALTER TABLE cache_cuaca ADD COLUMN jumlah_dibuka INTEGER NOT NULL DEFAULT 0;",
+    );
+    versiSaatIni = 2;
+  }
 
   await db.execAsync("PRAGMA user_version = " + VERSI_DATABASE);
 }
