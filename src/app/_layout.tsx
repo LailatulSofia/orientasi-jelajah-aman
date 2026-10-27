@@ -1,15 +1,28 @@
-// app/_layout.tsx (root layout)
 import { Stack } from "expo-router";
+import { ThemeProvider } from "../context/ThemeContext";
 
 export default function RootLayout() {
-    return (
-        <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="detail/[kota]" options={{ title: "Detail Cuaca" }} />
-            <Stack.Screen
-                name="tambah-favorit"
-                options={{ presentation: "modal", title: "Tambah Favorit" }}
-            />
-        </Stack>
-    );
+  return (
+    <ThemeProvider>
+      <Stack>
+        <Stack.Screen
+          name="(tabs)"
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="detail/[kota]"
+          options={{ title: "Detail Cuaca" }}
+        />
+
+        <Stack.Screen
+          name="tambah-favorit"
+          options={{
+            presentation: "modal",
+            title: "Tambah Favorit",
+          }}
+        />
+      </Stack>
+    </ThemeProvider>
+  );
 }

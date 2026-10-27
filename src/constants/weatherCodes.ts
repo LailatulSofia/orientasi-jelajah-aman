@@ -18,7 +18,7 @@ const kamusKodeCuaca: Record<number, string> = {
     81: "Hujan Lokal Sedang",
     82: "Hujan Lokal Lebat",
     95: "Badai Petir"
- };
+};
  
  export function labelKodeCuaca(kode: number): string {
     return kamusKodeCuaca[kode] ?? "Tidak diketahui";
